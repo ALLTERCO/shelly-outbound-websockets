@@ -1,5 +1,7 @@
 const {WebSocketServer, WebSocket} = require('ws');
 
+const DEBUG = true;
+
 /**
  * Simple object check.
  * @param item
@@ -64,6 +66,10 @@ class ShellyOWS {
     init() {
         this.ws = new WebSocketServer({server: this.httpServer});
         this.ws.on('connection', async (webSocket, request, client) => {
+            if (DEBUG) {
+                console.error('New connection: ', request.socket.remoteAddress);
+            }
+
             webSocket.on('message', async (message) => {
                 message = JSON.parse(message.toString());
 

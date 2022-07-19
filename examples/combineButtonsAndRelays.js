@@ -13,6 +13,7 @@ const httpServer = http.createServer()
 
 let shellyOws = new ShellyOWS(httpServer);
 
+
 shellyOws.addHandler("NotifyEvent", async (clientId, params) => {
     if (!params.events) {
         return;
@@ -21,7 +22,7 @@ shellyOws.addHandler("NotifyEvent", async (clientId, params) => {
     for (let event of params.events) {
         if (event.event === "single_push") {
             // map input:N -> switch:N
-            let id = parseInt(event.component.split("input:")[0], 10);
+            let id = parseInt(event.component.split("input:")[1], 10);
 
             for (let clientId of shellyOws.getClients()) {
                 // On each single_push, call Switch.toggle on all switch'able clients
@@ -29,7 +30,7 @@ shellyOws.addHandler("NotifyEvent", async (clientId, params) => {
 
                 // check if switch:N exists for this client
                 if (state["switch:" + id]) {
-                    shellyOws.call(clientId, "Switch.toggle", {'id': id});
+                    await shellyOws.call(clientId, "Switch.toggle", {'id': id});
                 }
             }
         }
